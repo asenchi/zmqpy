@@ -1,0 +1,189 @@
+import errno
+
+from libzmq import *
+
+_optionals = []
+
+ENOTSUP = ZMQ_ENOTSUP
+EPROTONOSUPPORT = ZMQ_EPROTONOSUPPORT
+ENOBUFS = ZMQ_ENOBUFS
+ENETDOWN = ZMQ_ENETDOWN
+EADDRINUSE = ZMQ_EADDRINUSE
+EADDRNOTAVAIL = ZMQ_EADDRNOTAVAIL
+ECONNREFUSED = ZMQ_ECONNREFUSED
+EINPROGRESS = ZMQ_EINPROGRESS
+ENOTSOCK = ZMQ_ENOTSOCK
+
+# Native 0MQ error codes
+EFSM = ZMQ_EFSM
+ENOCOMPATPROTO = ZMQ_ENOCOMPATPROTO
+ETERM = ZMQ_ETERM
+EMTHREAD = ZMQ_EMTHREAD
+MAX_VSM_SIZE = ZMQ_MAX_VSM_SIZE
+
+# Error handling
+EAGAIN = errno.EAGAIN
+EINVAL = errno.EINVAL
+EFAULT = errno.EFAULT
+ENOMEM = errno.ENOMEM
+ENODEV = errno.ENODEV
+
+# Message types
+DELIMITER = ZMQ_DELIMITER
+VSM = ZMQ_VSM
+
+MSG_MORE = ZMQ_MSG_MORE
+MSG_SHARED = ZMQ_MSG_SHARED
+MSG_MASK = ZMQ_MSG_MASK
+
+# Socket types.                                                             */ 
+PAIR = ZMQ_PAIR
+PUB = ZMQ_PUB
+SUB = ZMQ_SUB
+REQ = ZMQ_REQ
+REP = ZMQ_REP
+DEALER = ZMQ_DEALER
+ROUTER = ZMQ_ROUTER
+PULL = ZMQ_PULL
+PUSH = ZMQ_PUSH
+
+if ZMQ_VERSION >= 20101:
+    XPUB = ZMQ_XPUB
+    XSUB = ZMQ_XSUB
+    _optionals.extend(['XPUB', 'XSUB'])
+
+XREQ = ZMQ_XREQ
+XREP = ZMQ_XREP
+
+if ZMQ_VERSION < 30000:
+    UPSTREAM = ZMQ_UPSTREAM
+    DOWNSTREAM = ZMQ_DOWNSTREAM
+    _optionals.extend(['UPSTREAM', 'DOWNSTREAM'])
+
+AFFINITY = ZMQ_AFFINITY
+IDENTITY = ZMQ_IDENTITY
+SUBSCRIBE = ZMQ_SUBSCRIBE
+UNSUBSCRIBE = ZMQ_UNSUBSCRIBE
+RATE = ZMQ_RATE
+RECOVERY_IVL = ZMQ_RECOVERY_IVL
+SNDBUF = ZMQ_SNDBUF
+RCVBUF = ZMQ_RCVBUF
+RCVMORE = ZMQ_RCVMORE
+FD = ZMQ_FD
+EVENTS = ZMQ_EVENTS
+TYPE = ZMQ_TYPE
+LINGER = ZMQ_LINGER
+RECONNECT_IVL = ZMQ_RECONNECT_IVL
+BACKLOG = ZMQ_BACKLOG
+
+# sockopt types
+sockopts_bytes = [SUBSCRIBE, UNSUBSCRIBE, IDENTITY]
+sockopts_int64 = [AFFINITY]
+sockopts_int32 = []
+
+# Socket options
+if ZMQ_VERSION < 30000:
+    HWM = ZMQ_HWM
+    SWAP = ZMQ_SWAP
+    MCAST_LOOP = ZMQ_MCAST_LOOP
+    _optionals.extend(['HWM', 'SWAP', 'MCAST_LOOP'])
+    sockopts_int64.extend([HWM, SWAP, MCAST_LOOP])
+else:
+    SNDHWM = ZMQ_SNDHWM
+    RCVHWM = ZMQ_RCVHWM
+    MAXMSGSIZE= ZMQ_MAXMSGSIZE
+    _optionals.extend(['SNDHWM', 'RCVHWM', 'MAXMSGSIZE'])
+    sockopts_int32.extend([SNDHWM, RCVHWM])
+
+if ZMQ_VERSION >= 20101:
+    if ZMQ_VERSION < 30000:
+        RECOVERY_IVL_MSEC = ZMQ_RECOVERY_IVL_MSEC
+        sockopts_int64.append(RECOVERY_IVL_MSEC)
+        _optionals.append('RECOVERY_IVL_MSEC')
+
+    RECONNECT_IVL_MAX = ZMQ_RECONNECT_IVL_MAX
+    sockopts_int32.append(RECONNECT_IVL_MAX)
+    _optionals.append('RECONNECT_IVL_MAX')
+
+switched = [RATE, RECOVERY_IVL, SNDBUF, RCVBUF, RCVMORE]
+if ZMQ_VERSION < 30000:
+    sockopts_int64.extend(switched)
+else:
+    sockopts_int32.extend(switched)
+
+# Send/recv options
+if ZMQ_VERSION < 30000:
+    NOBLOCK = ZMQ_NOBLOCK
+else:
+    NOBLOCK = ZMQ_DONTWAIT
+    DONTWAIT = ZMQ_DONTWAIT
+    _optionals.extend(['DONTWAIT'])
+SNDMORE = ZMQ_SNDMORE
+
+POLLIN = ZMQ_POLLIN
+POLLOUT = ZMQ_POLLOUT
+POLLERR = ZMQ_POLLERR
+
+# Devices
+STREAMER = ZMQ_STREAMER
+FORWARDER = ZMQ_FORWARDER
+QUEUE = ZMQ_QUEUE
+
+__all__ = [
+    'NOBLOCK',
+    'FD',
+    'EVENTS',
+    'TYPE',
+    'LINGER',
+    'RECONNECT_IVL',
+    'BACKLOG',
+    'PAIR',
+    'PUB',
+    'SUB',
+    'REQ',
+    'REP',
+    'XREQ',
+    'XREP',
+    'PULL',
+    'PUSH',
+    'AFFINITY',
+    'IDENTITY',
+    'SUBSCRIBE',
+    'UNSUBSCRIBE',
+    'RATE',
+    'RECOVERY_IVL',
+    'SNDBUF',
+    'RCVBUF',
+    'SNDMORE',
+    'RCVMORE',
+    'POLLIN',
+    'POLLOUT',
+    'POLLERR',
+    'STREAMER',
+    'FORWARDER',
+    'QUEUE',
+    # ERRORNO codes
+    'EAGAIN',
+    'EINVAL',
+    'ENOTSUP',
+    'EPROTONOSUPPORT',
+    'ENOBUFS',
+    'ENETDOWN',
+    'EADDRINUSE',
+    'EADDRNOTAVAIL',
+    'ECONNREFUSED',
+    'EINPROGRESS',
+    'EMTHREAD',
+    'EFSM',
+    'ENOCOMPATPROTO',
+    'ETERM',
+    'EFAULT',
+    'ENOMEM',
+    'ENODEV',
+    # collections
+    'sockopts_bytes',
+    'sockopts_int32',
+    'sockopts_int64'
+]
+__all__.extend(_optionals)
+del _optionals
