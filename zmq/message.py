@@ -2,7 +2,7 @@ import time
 
 from threading import Event
 
-from error import ZMQNotDone
+from .error import ZMQNotDone
 
 class MessageTracker(object):
 

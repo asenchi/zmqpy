@@ -1,6 +1,6 @@
 import errno
 
-from libzmq import *
+from .libzmq import *
 
 _optionals = []
 
@@ -36,7 +36,7 @@ MSG_MORE = ZMQ_MSG_MORE
 MSG_SHARED = ZMQ_MSG_SHARED
 MSG_MASK = ZMQ_MSG_MASK
 
-# Socket types.                                                             */ 
+# Socket types
 PAIR = ZMQ_PAIR
 PUB = ZMQ_PUB
 SUB = ZMQ_SUB

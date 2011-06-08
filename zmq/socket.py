@@ -15,8 +15,8 @@
 
 from ctypes import c_int32, c_int64, c_size_t, sizeof, byref
 
-from libzmq import *
-from constants import *
+from .libzmq import *
+from .constants import *
 
 __all__ = ['Socket']
 
@@ -175,4 +175,27 @@ class Socket(object):
             return _send_message(self.handle, msg, flags)
 
     def recv(self, flags=0, copy=True, track=False):
-        pass
+        self._verify_open()
+
+        if copy:
+            return _recv_copy(self.handle, flags)
+        else:
+            return _recv_message(self.handle, flags, track)
+
+    def send_multipart(self, msg_parts, flags=0, copy=True, track=False):
+        for msg in msg_parts[:-1]:
+            self.send(msg, SNDMORE|flags, copy=copy, track=track)
+        return self.send(msg_parts[-1], flags, copy=copy, track=track)
+
+    def recv_multipart(self, flags=0, copy=True, track=False):
+        parts = []
+        while True:
+            part = self.recv(flags, copy=copy, track=track)
+            parts.append(part)
+            if self.rcvmore():
+                continue
+            else:
+                break
+        return parts
+
+# TODO Implement helper methods: json, tnetstrings, pyobj, etc

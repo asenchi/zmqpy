@@ -1,7 +1,8 @@
 
-from libzmq import *
-from constants import *
-from socket import Socket
+from .libzmq import *
+from .constants import *
+from .error import *
+from .socket import Socket
 
 __all__ = ['Context']
 

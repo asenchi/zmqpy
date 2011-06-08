@@ -1,7 +1,9 @@
 
 from ctypes import get_errno
 
-from libzmq import zmq_strerror
+from .libzmq import zmq_strerror
+
+__all__ = ['ZMQException', 'ZMQError', 'ZMQNotDone']
 
 class ZMQException(Exception):
     pass

@@ -24,20 +24,6 @@ except:
     if location:
         libzmq = CDLL(location, use_errno=True)
 
-# Exceptions
-class ZMQException(Exception):
-    pass
-
-class ZMQError(ZMQException):
-    def __init__(self, errno=None):
-        if errno is None:
-            errno = get_errno()
-        self.strerror = zmq_strerror(errno)
-        self.errno = errno
-
-    def __str__(self):
-        return self.strerror
-
 # Constants
 ZMQ_HAUSNUMERO = 156384712
 ZMQ_ENOTSUP = (ZMQ_HAUSNUMERO + 1)
@@ -231,7 +217,7 @@ __zmq_version(byref(major), byref(minor), byref(patch))
 def zmq_version():
     return tuple(pt.value for pt in (major,minor,patch))
 
-ZMQ_VERSION = "".join([str(v) for v in zmq_version()])
+ZMQ_VERSION = int("".join([str(v) for v in zmq_version()]))
 
 zmq_msg_init = _zmq_func(libzmq, 'zmq_msg_init',
                          restype=c_int,
