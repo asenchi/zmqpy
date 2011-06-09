@@ -3,7 +3,7 @@ from ctypes import get_errno
 
 from .libzmq import zmq_strerror
 
-__all__ = ['ZMQException', 'ZMQError', 'ZMQNotDone']
+__all__ = ['ZMQException', 'ZMQError', 'ZMQNotDone', 'strerror']
 
 class ZMQException(Exception):
     pass
@@ -20,3 +20,10 @@ class ZMQError(ZMQException):
 
 class ZMQNotDone(ZMQException):
     pass
+
+def strerror(errnum):
+    rc = zmq_strerror(errnum)
+    if str is bytes:
+        return rc
+    else:
+        return rc.decode()

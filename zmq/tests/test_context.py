@@ -30,7 +30,7 @@ class TestContext:
         assert c3 == c4
 
     def test_failure(self):
-        pytest.skip("Not Implemented")
+        pytest.skip("Not implemented")
 
     def test_context_socket(self):
-        pytest.skip("Not Implemented")
+        pytest.skip("Not implemented")
