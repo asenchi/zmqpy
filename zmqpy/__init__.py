@@ -13,4 +13,5 @@ def get_version():
 
 __version__ = get_version()
 
-
+from zmqpy.context import Context
+from zmqpy.errors import ZMQException, ZMQError, ZMQNotDone, strerror

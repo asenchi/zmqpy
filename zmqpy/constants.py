@@ -1,5 +1,7 @@
 import errno
 
+from zmqpy import libzmq
+
 _optionals = []
 
 # Constants
@@ -131,7 +133,7 @@ ROUTER = ZMQ_ROUTER
 PULL = ZMQ_PULL
 PUSH = ZMQ_PUSH
 
-if ZMQ_VERSION >= 20101:
+if libzmq.ZMQ_VERSION >= 20101:
     XPUB = ZMQ_XPUB
     XSUB = ZMQ_XSUB
     _optionals.extend(['XPUB', 'XSUB'])
@@ -139,7 +141,7 @@ if ZMQ_VERSION >= 20101:
 XREQ = ZMQ_XREQ
 XREP = ZMQ_XREP
 
-if ZMQ_VERSION < 30000:
+if libzmq.ZMQ_VERSION < 30000:
     UPSTREAM = ZMQ_UPSTREAM
     DOWNSTREAM = ZMQ_DOWNSTREAM
     _optionals.extend(['UPSTREAM', 'DOWNSTREAM'])
@@ -166,7 +168,7 @@ sockopts_int64 = [AFFINITY]
 sockopts_int32 = []
 
 # Socket options
-if ZMQ_VERSION < 30000:
+if libzmq.ZMQ_VERSION < 30000:
     HWM = ZMQ_HWM
     SWAP = ZMQ_SWAP
     MCAST_LOOP = ZMQ_MCAST_LOOP
@@ -179,8 +181,8 @@ else:
     _optionals.extend(['SNDHWM', 'RCVHWM', 'MAXMSGSIZE'])
     sockopts_int32.extend([SNDHWM, RCVHWM])
 
-if ZMQ_VERSION >= 20101:
-    if ZMQ_VERSION < 30000:
+if libzmq.ZMQ_VERSION >= 20101:
+    if libzmq.ZMQ_VERSION < 30000:
         RECOVERY_IVL_MSEC = ZMQ_RECOVERY_IVL_MSEC
         sockopts_int64.append(RECOVERY_IVL_MSEC)
         _optionals.append('RECOVERY_IVL_MSEC')
@@ -190,13 +192,13 @@ if ZMQ_VERSION >= 20101:
     _optionals.append('RECONNECT_IVL_MAX')
 
 switched = [RATE, RECOVERY_IVL, SNDBUF, RCVBUF, RCVMORE]
-if ZMQ_VERSION < 30000:
+if libzmq.ZMQ_VERSION < 30000:
     sockopts_int64.extend(switched)
 else:
     sockopts_int32.extend(switched)
 
 # Send/recv options
-if ZMQ_VERSION < 30000:
+if libzmq.ZMQ_VERSION < 30000:
     NOBLOCK = ZMQ_NOBLOCK
 else:
     NOBLOCK = ZMQ_DONTWAIT

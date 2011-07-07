@@ -17,10 +17,10 @@
 
 from ctypes import c_int32, c_int64, c_size_t, sizeof, byref
 
-import libzmq
+from zmqpy import libzmq
 
-from .constants import ENOTSUP, EINVAL
-from .errors import ZMQError
+from zmqpy.constants import ENOTSUP, EINVAL
+from zmqpy.errors import ZMQError
 
 __all__ = ['Socket']
 
