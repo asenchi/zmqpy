@@ -3,7 +3,7 @@ import sys
 
 from setuptools import setup, find_packages, Command
 
-VERSION = __import__("zmq").__version__
+VERSION = __import__("zmqpy").__version__
 
 install_requires = []
 try:
@@ -15,11 +15,11 @@ is_cpy = sys.version_info
 is_pypy = hasattr(sys, "pypy_version_info")
 
 setup(
-    name="python-zmq",
+    name="zmqpy",
     version=VERSION,
     description="Pure Python 0mq bindings.",
     license="MIT",
-    url="https://github.com/asenchi/python-zmq",
+    url="https://github.com/asenchi/zmqpy",
     author="Curt Micol",
     author_email="asenchi@asenchi.com",
     zip_safe=False,
@@ -33,5 +33,4 @@ setup(
       "Programming Language :: Python :: 2.7",
       "Programming Language :: Python :: 3",
     ],
-    test_suite='zmq.tests',
 )

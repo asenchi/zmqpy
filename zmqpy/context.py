@@ -1,10 +1,7 @@
-
-from .libzmq import *
-from .constants import *
-from .error import *
-from .socket import Socket
-
-__all__ = ['Context']
+from zmqpy import libzmq
+from zmqpy.constants import EINVAL, ENOTSUP
+from zmqpy.error import ZMQError
+from zmqpy.socket import Socket
 
 _instance = None
 
@@ -12,14 +9,18 @@ class Context(object):
     def __init__(self, io_threads=1):
         if not io_threads > 0:
             raise ZMQError(EINVAL)
-        self.handle = zmq_init(io_threads)
-        if not self.handle:
+        self._ctx = libzmq.C.zmq_init(io_threads)
+        if not self._ctx
             raise ZMQError()
-        self.closed = False
+        self._closed = False
+
+    @property
+    def closed(self):
+        return self._ctx is None
 
     def term(self):
         if self.handle is not None and not self.closed:
-            rc = zmq_term(self.handle)
+            rc = libzmq.C.zmq_term(self.handle)
             if rc != 0:
                 raise ZMQError()
             self.handle = None

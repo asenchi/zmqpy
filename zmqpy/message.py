@@ -40,7 +40,9 @@ class MessageTracker(object):
             remaining = 3600*24*7
         else:
             remaining = timeout
+
         done = False
+
         for e in self.events:
             if remaining < 0:
                 raise ZMQNotDone()
@@ -78,4 +80,8 @@ class Message(object):
             raise TypeError("unicode not currently supported")
 
         if data is None:
-            pass
+            rc = zmq_msg_init(byref(self.zmq_msg))
+
+        if rc != 0:
+            raise ZMQError()
+        self._failed_init = False

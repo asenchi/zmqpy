@@ -13,42 +13,35 @@
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 
+# TODO THIS NEEDS A LOT OF WORK AND SHOULD NOT BE CONSIDERED WORKING
+
 from ctypes import c_int32, c_int64, c_size_t, sizeof, byref
 
-from .libzmq import *
-from .constants import *
+import libzmq
+
+from .constants import ENOTSUP, EINVAL
+from .errors import ZMQError
 
 __all__ = ['Socket']
 
+# TODO
+def _recv_message(handle, flags=0, track=False):
+    msg = Message(track=track)
+    rc = zmq_recvmsg(handle, byref(msg.zmq_msg), flags)
+    if rc < 0:
+        raise ZMQError()
+    return msg
+
+def _recv_copy(handle, flags=0):
+    # TODO implement
+    pass
+
 class Socket(object):
-    """Create a 0mq socket of `socket_type` in the given `context`.
-
-    0mq sockets are created unbound, and not associated with an endpoint. In
-    order to establish a message flow, a socket must be connected to at least
-    one endpoint with :func:`connect` or created for accepting incoming
-    connections using :func:`bind`.
-
-    0mq present an abstraction of an `asynchronous message queue`, with the
-    exact queuing semantics dependant on the socket type in use. Conventional
-    sockets streams of bytes or discrete datagrams, 0mq sockets transfer
-    discrete messages.
-
-    With the exception of `ZMQ_PAIR`, 0mq sockets may be connected to multiple
-    endpoints using :func:`connect`, while simultaneously accepting incoming
-    connections from multiple endpoints bound to the socket using
-    :func:`bind`.
-
-    0mq sockets are not thread safe.
-
-    Socket Types
-    ------------
-    TODO
-    """
 
     def __init__(self, context, socket_type):
         self.context = context
         self.socket_type = socket_type
-        self.handle = zmq_socket(context.handle, socket_type)
+        self.handle = libzmq.C.zmq_socket(context.handle, socket_type)
         if self.handle is None:
             raise ZMQError()
         self.closed = False
@@ -56,7 +49,7 @@ class Socket(object):
     def close(self):
         """Destroy a 0mq socket object."""
         if self.handle is not None and not self.closed:
-            rc = zmq_close(self.handle)
+            rc = libzmq.C.zmq_close(self.handle)
             if rc != 0:
                 raise ZMQError()
             self.handle = None
@@ -68,23 +61,11 @@ class Socket(object):
             raise ZMQError(ENOTSUP)
 
     def bind(self, addr):
-        """Create an endpoint on the 0mq socket for accepting incoming
-        connections.
-
-        The `addr` argument is a string consisting of two parts:
-        `transport://address`. The transport portion specifies the underlying
-        transfer protocol to use. The address portion is specific to the
-        underlying transfer protocol selected.
-
-        Transports
-        ----------
-        TODO
-        """
         if isinstance(addr, unicode):
             addr = addr.encode('utf-8')
         if not isinstance(addr, bytes):
             raise TypeError('expected str, got: %r' % addr)
-        rc = zmq_bind(self.handle, addr)
+        rc = libzmq.C.zmq_bind(self.handle, addr)
         if rc != 0:
             raise ZMQError()
 
@@ -93,7 +74,7 @@ class Socket(object):
             addr = addr.encode('utf-8')
         if not isinstance(addr, bytes):
             raise TypeError('expected str, got: %r' % addr)
-        rc = zmq_connect(self.handle, addr)
+        rc = libzmq.C.zmq_connect(self.handle, addr)
         if rc != 0:
             raise ZMQError()
 
@@ -113,18 +94,18 @@ class Socket(object):
         if option in sockopts_bytes:
             if not isinstance(value, bytes):
                 raise TypeError('expected str, got: %r' % value)
-            rc = zmq_setsockopt(self.handle, option, byref(value),
+            rc = libzmq.C.zmq_setsockopt(self.handle, option, byref(value),
                     c_size_t(sizeof(value)))
         elif option in sockopts_int64:
             if not isinstance(value, int):
                 raise TypeError('expected str, got: %r' % value)
             value_int64 = c_int64(value)
-            rc = zmq_setsockopt(self.handle, option, byref(value_int64),
+            rc = libzmq.C.zmq_setsockopt(self.handle, option, byref(value_int64),
                     c_size_t(sizeof(value)))
         elif option in sockopts_int32:
             if not isinstance(value, int):
                 raise TypeError('expected str, got: %r' % value)
-            rc = zmq_setsockopt(self.handle, option, byref(value),
+            rc = libzmq.C.zmq_setsockopt(self.handle, option, byref(value),
                     c_size_t(sizeof(value)))
         else:
             raise ZMQError()
@@ -138,17 +119,17 @@ class Socket(object):
         if option in sockopts_bytes:
             if not vlen:
                 vlen = c_size_t(sizeof(value))
-            rc = zmq_getsockopt(self.handle, option, byref(value), byref(vlen))
+            rc = libzmq.C.zmq_getsockopt(self.handle, option, byref(value), byref(vlen))
         elif option in sockopts_int64:
             value = c_int64(value)
             if not vlen:
                 vlen = c_size_t(sizeof(value))
-            rc = zmq_getsockopt(self.handle, option, byref(value), byref(vlen))
+            rc = libzmq.C.zmq_getsockopt(self.handle, option, byref(value), byref(vlen))
         elif option in sockopts_int32:
             value = c_int32(value)
             if not vlen:
                 vlen = c_size_t(sizeof(value))
-            rc = zmq_getsockopt(self.handle, option, byref(value), byref(vlen))
+            rc = libzmq.C.zmq_getsockopt(self.handle, option, byref(value), byref(vlen))
         else:
             raise ZMQError(EINVAL)
 

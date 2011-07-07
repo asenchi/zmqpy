@@ -13,9 +13,4 @@ def get_version():
 
 __version__ = get_version()
 
-from zmq.libzmq import *
 
-from zmq.constants import *
-from zmq.context import *
-from zmq.error import *
-from zmq.socket import *
